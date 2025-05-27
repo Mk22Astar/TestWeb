@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор тестов по тексту</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <h1>Генератор тестов по тексту</h1>
+
+            <div class="input-container">
+                <div class="input-group">
+                    <div class="textarea-wrapper">
+                        <textarea id="input-text" placeholder="Введите текст здесь..."></textarea>
+                    </div>
+                    <button id="generate-btn" class="big-button">Создать тест</button>
+                </div>
+
+                <div class="input-group">
+                    <div class="textarea-wrapper">
+                        <textarea id="output-text" readonly placeholder="Здесь будет ваш тест"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button id="copy-btn" class="big-button">Копировать тест</button>
+                        <p class="save-text">Сохранить как:</p>
+                        <div class="additional-buttons">
+                            <button id="pdf-btn" class="small-button">PDF</button>
+                            <button id="word-btn" class="small-button">Word</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="test-preview" class="test-preview hidden">
+                <h2 id="test-title"></h2>
+                <div id="questions-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html>
