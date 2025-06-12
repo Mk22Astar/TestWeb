@@ -11,6 +11,23 @@
         <div class="main-content">
             <h1>Генератор тестов по тексту</h1>
 
+            <!-- Блок загрузки контента -->
+            <div class="content-sources">
+                <div class="source-group">
+                    <input type="text" id="url-input" placeholder="https://example.com" class="url-input">
+                    <button id="fetch-text-btn" class="url-button">Загрузить с сайта</button>
+                    <div id="url-status" class="status-message"></div>
+                </div>
+                <div class="source-group">
+                    <label for="file-input" class="file-upload-button">
+                        <span id="file-label">Выберите файл (.txt, .docx)</span>
+                        <input type="file" id="file-input" accept=".txt,.doc,.docx">
+                    </label>
+                    <div id="file-status" class="status-message"></div>
+                </div>
+            </div>
+
+            <!-- Основные рабочие области -->
             <div class="input-container">
                 <div class="input-group">
                     <div class="textarea-wrapper">
@@ -34,13 +51,28 @@
                 </div>
             </div>
 
+            <!-- Блок предпросмотра теста -->
             <div id="test-preview" class="test-preview hidden">
                 <h2 id="test-title"></h2>
                 <div id="questions-container"></div>
+
+                <div id="test-results" class="test-results hidden">
+                    <h3>Результаты теста</h3>
+                    <div class="result-row">
+                        <span>Правильных ответов:</span>
+                        <strong><span id="correct-answers">0</span>/<span id="total-questions">0</span></strong>
+                    </div>
+                    <div class="result-row">
+                        <span>Процент правильных:</span>
+                        <strong><span id="percentage">0</span>%</strong>
+                    </div>
+                    <button id="retry-test-btn" class="big-button">Пройти ещё раз</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <script src="https://unpkg.com/mammoth@1.4.0/mammoth.browser.min.js"></script>
     <script src="/static/main.js"></script>
 </body>
 </html>
