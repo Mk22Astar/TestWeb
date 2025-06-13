@@ -15,6 +15,10 @@ from bs4 import BeautifulSoup
 import aiohttp
 import logging
 from fastapi.middleware.cors import CORSMiddleware
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.pagesizes import letter
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -217,43 +221,48 @@ async def fetch_text_from_url(url: str):
         )
 
 
+
 @app.post("/api/generate-pdf")
 async def generate_pdf(test_data: dict):
     try:
-        # Создаем PDF
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
+        # Регистрируем шрифт с поддержкой русского языка
+        pdfmetrics.registerFont(TTFont('Arial', 'arial.ttf'))
 
-        # Добавляем название теста
-        pdf.set_font("Arial", 'B', 16)
-        pdf.cell(0, 10, test_data.get('name', 'Тест без названия'), ln=True, align='C')
-        pdf.ln(10)
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer, pagesize=letter)
 
-        # Добавляем вопросы
-        pdf.set_font("Arial", size=12)
-        for i, question in enumerate(test_data.get('questions', []), 1):
-            pdf.set_font("Arial", 'B', 12)
-            pdf.cell(0, 10, f"Вопрос {i}: {question.get('question', 'Вопрос без текста')}", ln=True)
-            pdf.set_font("Arial", size=12)
+        # Настройки
+        p.setFont("Arial", 16)
+        p.drawString(100, 750, test_data['name'])
 
-            for j, option in enumerate(question.get('options', []), 1):
-                pdf.cell(0, 10, f"   {j}. {option.get('answer', 'Вариант без текста')}", ln=True)
+        y_position = 700
+        p.setFont("Arial", 12)
 
-            pdf.ln(5)
+        for i, question in enumerate(test_data['questions'], 1):
+            p.drawString(100, y_position, f"{i}. {question['question']}")
+            y_position -= 20
 
-        # Возвращаем PDF как поток
-        pdf_buffer = io.BytesIO()
-        pdf.output(pdf_buffer)
-        pdf_buffer.seek(0)
+            for j, option in enumerate(question['options'], 1):
+                p.drawString(120, y_position, f"{j}. {option['answer']}")
+                y_position -= 15
+
+            y_position -= 10
+
+            if y_position < 50:
+                p.showPage()
+                y_position = 750
+                p.setFont("Arial", 12)
+
+        p.save()
+        buffer.seek(0)
 
         return StreamingResponse(
-            pdf_buffer,
+            buffer,
             media_type="application/pdf",
             headers={"Content-Disposition": "attachment; filename=test.pdf"}
         )
+
     except Exception as e:
-        logger.error(f"Ошибка генерации PDF: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

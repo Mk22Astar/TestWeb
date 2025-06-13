@@ -293,39 +293,48 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Тест скопирован в буфер обмена');
     });
 
-    pdfBtn.addEventListener('click', async () => {
-        if (!currentTestData) {
-            alert('Сначала сгенерируйте тест');
-            return;
+    // Генерация PDF
+pdfBtn.addEventListener('click', async () => {
+    if (!currentTestData) {
+        alert('Сначала сгенерируйте тест');
+        return;
+    }
+
+    try {
+        // Показываем индикатор загрузки
+        pdfBtn.disabled = true;
+        pdfBtn.innerHTML = '<span class="loading"></span> Генерация PDF...';
+
+        const response = await fetch('/api/generate-pdf', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(currentTestData),
+        });
+
+        if (!response.ok) {
+            throw new Error(await response.text());
         }
 
-        try {
-            const response = await fetch('/api/generate-pdf', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(currentTestData),
-            });
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'test.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
 
-            if (!response.ok) {
-                throw new Error('Ошибка генерации PDF');
-            }
-
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'test.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Ошибка при создании PDF');
-        }
-    });
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при генерации PDF: ' + error.message);
+    } finally {
+        pdfBtn.disabled = false;
+        pdfBtn.textContent = 'PDF';
+    }
+});
 
     wordBtn.addEventListener('click', async () => {
         if (!currentTestData) {
