@@ -41,7 +41,7 @@ h1, h2, h3 {
     margin-bottom: 20px;
 }
 
-/* Блок загрузки контента */
+
 .content-sources {
     display: flex;
     flex-direction: column;
@@ -119,7 +119,7 @@ h1, h2, h3 {
     padding: 2px 5px;
 }
 
-/* Основные рабочие области */
+
 .input-container {
     display: flex;
     justify-content: space-between;
@@ -198,7 +198,7 @@ button:hover {
     gap: 8px;
 }
 
-/* Блок теста */
+
 .test-preview {
     margin-top: 20px;
     padding: 20px;
@@ -273,7 +273,7 @@ button:hover {
     color: #388e3c;
 }
 
-/* Адаптивность */
+
 @media (max-width: 768px) {
     .input-container {
         flex-direction: column;

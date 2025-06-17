@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Элементы интерфейса
     const inputText = document.getElementById('input-text');
     const outputText = document.getElementById('output-text');
     const generateBtn = document.getElementById('generate-btn');
@@ -23,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentTestData = null;
 
-    // ========== Загрузка файлов ==========
+
     fileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -32,38 +31,38 @@ document.addEventListener('DOMContentLoaded', () => {
         fileStatus.className = "status-message";
 
         try {
-            // Проверка типа файла
+
             if (!file.name.match(/\.(txt|docx)$/i)) {
                 throw new Error("Поддерживаются только .txt и .docx файлы");
             }
 
-            // Проверка размера (не более 5MB)
+
             if (file.size > 5 * 1024 * 1024) {
                 throw new Error("Файл слишком большой (макс. 5MB)");
             }
 
             let text;
 
-            // Обработка TXT
+
             if (file.name.endsWith('.txt')) {
                 text = await file.text();
             }
-            // Обработка DOCX
+
             else {
                 const arrayBuffer = await file.arrayBuffer();
                 const result = await mammoth.extractRawText({ arrayBuffer });
                 text = result.value;
 
-                // Удаляем лишние пробелы и переносы
+
                 text = text.replace(/\s+/g, ' ').trim();
             }
 
-            // Проверка что файл не пустой
+
             if (!text || text.length < 10) {
                 throw new Error("Файл не содержит текста или он слишком короткий");
             }
 
-            // Вставляем текст в поле ввода
+
             inputText.value = text;
             fileLabel.textContent = file.name;
             fileStatus.textContent = "Файл успешно загружен";
@@ -78,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ========== Загрузка по URL ==========
+
     fetchTextBtn.addEventListener('click', async () => {
         const url = urlInput.value.trim();
         if (!url) {
@@ -87,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Проверка валидности URL
+
         if (!url.startsWith('http://') && !url.startsWith('https://')) {
             urlStatus.textContent = "URL должен начинаться с http:// или https://";
             urlStatus.className = "status-message error";
@@ -125,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ========== Генерация теста ==========
+
     generateBtn.addEventListener('click', async () => {
         const text = inputText.value.trim();
         if (!text) {
@@ -163,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ========== Вспомогательные функции ==========
+
     function formatTestAsText(testData) {
         let result = `Название теста: ${testData.name || 'Без названия'}\n\n`;
 
@@ -227,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 questionsContainer.appendChild(questionEl);
             });
 
-            // Кнопка проверки результатов
+
             const checkBtn = document.createElement('button');
             checkBtn.className = 'big-button';
             checkBtn.textContent = 'Проверить ответы';
@@ -267,33 +266,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Проверка выбранного ответа
+
             if (selectedOption) {
                 const selectedIndex = parseInt(selectedOption.value);
                 if (question.options[selectedIndex].correct) {
                     correctCount++;
                 } else {
-                    // Подсветка неправильного ответа
+
                     options[selectedIndex].classList.add('wrong-answer');
                 }
             }
         });
 
-        // Показ результатов
+
         correctAnswersSpan.textContent = correctCount;
         totalQuestionsSpan.textContent = questions.length;
         percentageSpan.textContent = Math.round((correctCount / questions.length) * 100);
         testResults.classList.remove('hidden');
     }
 
-    // ========== Другие обработчики ==========
+
     copyBtn.addEventListener('click', () => {
         outputText.select();
         document.execCommand('copy');
         alert('Тест скопирован в буфер обмена');
     });
 
-    // Генерация PDF
+
 pdfBtn.addEventListener('click', async () => {
     if (!currentTestData) {
         alert('Сначала сгенерируйте тест');
@@ -301,7 +300,7 @@ pdfBtn.addEventListener('click', async () => {
     }
 
     try {
-        // Показываем индикатор загрузки
+
         pdfBtn.disabled = true;
         pdfBtn.innerHTML = '<span class="loading"></span> Генерация PDF...';
 
